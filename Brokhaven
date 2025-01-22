@@ -1,0 +1,144 @@
+-- Certifique-se de que este script está dentro de uma ScreenGui no StarterGui
+
+-- Obter o jogador local
+local player = game.Players.LocalPlayer
+
+-- Criar elementos da interface gráfica
+local screenGui = Instance.new("ScreenGui")
+local toggleButton = Instance.new("TextButton")
+local panel = Instance.new("Frame")
+local jumpButton = Instance.new("TextButton")
+local speedTextBox = Instance.new("TextBox")
+local speedLabel = Instance.new("TextLabel")
+local teleportTextBox = Instance.new("TextBox")
+local teleportLabel = Instance.new("TextLabel")
+
+-- Configuração do ScreenGui
+screenGui.Name = "ControlGui"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Configuração do botão de alternância (abre/fecha o painel)
+toggleButton.Name = "ToggleButton"
+toggleButton.Size = UDim2.new(0, 150, 0, 50) -- Tamanho do botão (150x50 pixels)
+toggleButton.Position = UDim2.new(0.05, 0, 0.05, 0) -- Posição no canto superior esquerdo
+toggleButton.Text = "Abrir Painel"
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255) -- Cor azul claro
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- Texto branco
+toggleButton.Font = Enum.Font.SourceSansBold
+toggleButton.TextSize = 18
+toggleButton.Parent = screenGui
+
+-- Configuração do painel
+panel.Name = "ControlPanel"
+panel.Size = UDim2.new(0, 300, 0, 300) -- Tamanho do painel (300x300 pixels)
+panel.Position = UDim2.new(0.05, 0, 0.15, 0) -- Logo abaixo do botão de alternância
+panel.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Fundo cinza escuro
+panel.Visible = false -- Inicialmente oculto
+panel.Parent = screenGui
+
+-- Configuração do botão de pular dentro do painel
+jumpButton.Name = "JumpButton"
+jumpButton.Size = UDim2.new(0, 200, 0, 50) -- Tamanho do botão (200x50 pixels)
+jumpButton.Position = UDim2.new(0.5, -100, 0.1, 0) -- Centralizado no painel
+jumpButton.Text = "Pular"
+jumpButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255) -- Cor azul claro
+jumpButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- Texto branco
+jumpButton.Font = Enum.Font.SourceSansBold
+jumpButton.TextSize = 24
+jumpButton.Parent = panel
+
+-- Configuração da caixa de texto (TextBox) para velocidade
+speedTextBox.Name = "SpeedTextBox"
+speedTextBox.Size = UDim2.new(0, 200, 0, 50) -- Tamanho da caixa de texto (200x50 pixels)
+speedTextBox.Position = UDim2.new(0.5, -100, 0.3, 0) -- Centralizado no painel, abaixo do botão de pular
+speedTextBox.PlaceholderText = "Digite a velocidade"
+speedTextBox.Text = ""
+speedTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Fundo branco
+speedTextBox.TextColor3 = Color3.fromRGB(0, 0, 0) -- Texto preto
+speedTextBox.Font = Enum.Font.SourceSans
+speedTextBox.TextSize = 18
+speedTextBox.Parent = panel
+
+-- Configuração do rótulo (Label) para a TextBox de velocidade
+speedLabel.Name = "SpeedLabel"
+speedLabel.Size = UDim2.new(0, 200, 0, 25) -- Tamanho do rótulo (200x25 pixels)
+speedLabel.Position = UDim2.new(0.5, -100, 0.25, 0) -- Acima da TextBox de velocidade
+speedLabel.Text = "Velocidade:"
+speedLabel.BackgroundTransparency = 1 -- Fundo transparente
+speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Texto branco
+speedLabel.Font = Enum.Font.SourceSans
+speedLabel.TextSize = 18
+speedLabel.Parent = panel
+
+-- Configuração da caixa de texto (TextBox) para teleportar
+teleportTextBox.Name = "TeleportTextBox"
+teleportTextBox.Size = UDim2.new(0, 200, 0, 50) -- Tamanho da caixa de texto (200x50 pixels)
+teleportTextBox.Position = UDim2.new(0.5, -100, 0.55, 0) -- Centralizado no painel, abaixo da TextBox de velocidade
+teleportTextBox.PlaceholderText = "Nome do jogador"
+teleportTextBox.Text = ""
+teleportTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Fundo branco
+teleportTextBox.TextColor3 = Color3.fromRGB(0, 0, 0) -- Texto preto
+teleportTextBox.Font = Enum.Font.SourceSans
+teleportTextBox.TextSize = 18
+teleportTextBox.Parent = panel
+
+-- Configuração do rótulo (Label) para a TextBox de teleportar
+teleportLabel.Name = "TeleportLabel"
+teleportLabel.Size = UDim2.new(0, 200, 0, 25) -- Tamanho do rótulo (200x25 pixels)
+teleportLabel.Position = UDim2.new(0.5, -100, 0.5, 0) -- Acima da TextBox de teleportar
+teleportLabel.Text = "Teleporte para:"
+teleportLabel.BackgroundTransparency = 1 -- Fundo transparente
+teleportLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Texto branco
+teleportLabel.Font = Enum.Font.SourceSans
+teleportLabel.TextSize = 18
+teleportLabel.Parent = panel
+
+-- Função para abrir/fechar o painel
+toggleButton.MouseButton1Click:Connect(function()
+    panel.Visible = not panel.Visible -- Alterna a visibilidade do painel
+    toggleButton.Text = panel.Visible and "Fechar Painel" or "Abrir Painel"
+end)
+
+-- Função para pular
+jumpButton.MouseButton1Click:Connect(function()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid:ChangeState(Enum.HumanoidStateType.Jumping) -- Faz o personagem pular
+    end
+end)
+
+-- Função para alterar a velocidade
+speedTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local speed = tonumber(speedTextBox.Text) -- Converte o texto para número
+            if speed and speed > 0 then
+                humanoid.WalkSpeed = speed -- Define a velocidade do personagem
+            else
+                speedTextBox.Text = "" -- Limpa o texto inválido
+                speedTextBox.PlaceholderText = "Valor inválido!"
+            end
+        end
+    end
+end)
+
+-- Função para teleportar
+teleportTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local targetName = teleportTextBox.Text
+        local targetPlayer = game.Players:FindFirstChild(targetName)
+        if targetPlayer and targetPlayer.Character then
+            local targetPosition = targetPlayer.Character.PrimaryPart.Position
+            local character = player.Character or player.CharacterAdded:Wait()
+            if character and character.PrimaryPart then
+                character:SetPrimaryPartCFrame(CFrame.new(targetPosition)) -- Teleporta o jogador
+            end
+        else
+            teleportTextBox.Text = "" -- Limpa o texto inválido
+            teleportTextBox.PlaceholderText = "Jogador não encontrado!"
+        end
+    end
+end)
